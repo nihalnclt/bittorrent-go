@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/nihalnclt/bittorrent-go/torrentfile"
 )
@@ -29,4 +30,12 @@ func main() {
 	}
 
 	fmt.Printf("InfoHash: %x\n", tf.InfoHash)
+	fmt.Printf("Announce: %s\n", tf.Announce)
+
+	err = tf.DownloadToFile(outPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	time.Sleep(3 * time.Second)
 }

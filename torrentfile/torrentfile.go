@@ -2,12 +2,16 @@ package torrentfile
 
 import (
 	"bytes"
+	"crypto/rand"
 	"crypto/sha1"
 	"fmt"
 	"os"
 
 	"github.com/jackpal/bencode-go"
+	"github.com/nihalnclt/bittorrent-go/p2p"
 )
+
+const Port uint16 = 6881
 
 // TorrentFile encodes the metadata from a .torrent file
 type TorrentFile struct {
@@ -95,4 +99,31 @@ func (bto *bencodeTorrent) toTorrentFile() (TorrentFile, error) {
 	}
 
 	return t, nil
+}
+
+func (t *TorrentFile) DownloadToFile(path string) error {
+	var peerID [20]byte
+	_, err := rand.Read(peerID[:])
+	if err != nil {
+		return err
+	}
+
+	peers, err := t.requestPeers(peerID, Port)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("PEERS", peers)
+
+	torrent := p2p.Torrent{
+		Peers:       peers,
+		PeerID:      peerID,
+		InfoHash:    t.InfoHash,
+		PieceHashes: t.PieceHashes,
+		PieceLength: t.PieceLength,
+		Length:      t.Length,
+		Name:        t.Name,
+	}
+	_, err = torrent.Download()
+	return nil
 }
