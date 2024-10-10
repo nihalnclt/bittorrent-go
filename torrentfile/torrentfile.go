@@ -124,6 +124,20 @@ func (t *TorrentFile) DownloadToFile(path string) error {
 		Length:      t.Length,
 		Name:        t.Name,
 	}
-	_, err = torrent.Download()
+	buf, err := torrent.Download()
+	if err != nil {
+		fmt.Println("Download error", err)
+		return err
+	}
+
+	outFile, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer outFile.Close()
+	_, err = outFile.Write(buf)
+	if err != nil {
+		return err
+	}
 	return nil
 }

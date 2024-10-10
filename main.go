@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 
 	"github.com/nihalnclt/bittorrent-go/torrentfile"
 )
@@ -36,6 +35,4 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	time.Sleep(3 * time.Second)
 }
